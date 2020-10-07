@@ -1,61 +1,82 @@
-import 'phaser'
+import 'phaser';
+import {IceGroup} from './magic';
+import {skillKeys, Direction} from './utils';
 
-export default class Player{
 
-    private scene: Phaser.Scene;
-    private sprite: Phaser.Physics.Arcade.Sprite;
+export default class Player extends Phaser.Physics.Arcade.Sprite{
+
     private cursor: Phaser.Types.Input.Keyboard.CursorKeys;
+    private skillKeys: skillKeys = {keyQ: null, keyE: null, keyR: null, keyW: null};
+    private iceMagic: IceGroup;
+    private shootDirection: Direction = Direction.Down;
+    private onSkill: boolean = false;
 
-    constructor(scene: Phaser.Scene){
-        this.scene = scene;
-    }
-
-    preload(){
-        this.scene.load.spritesheet("playerWalk", "assets/Spritesheets/Player/sage_walk.png", {frameWidth: 24, frameHeight: 24});
-    }
-
-    create(){
-        this.animsRoutine();
-        this.sprite = this.scene.physics.add.sprite(200,200, 'playerWalk');
-        this.sprite.setScale(2,2);
+    constructor(scene: Phaser.Scene, x: number, y: number){
+        super(scene, x,y, 'playerWalk');
+        this.setScale(2,2);
         this.cursor = this.scene.input.keyboard.createCursorKeys();
-        
+        this.skillKeys.keyQ = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        this.skillKeys.keyW = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.skillKeys.keyE = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        this.skillKeys.keyR = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+        this.createAnims();
+        this.iceMagic = new IceGroup(scene);
     }
 
-    input(){
-        this.sprite.setVelocity(0);
+    verifyInput(){
+        this.setVelocity(0);
         if(this.cursor.left.isDown){
-            this.sprite.setVelocityX(-100);
+            this.setVelocityX(-100);
+            
         }
         else if(this.cursor.right.isDown){
-            this.sprite.setVelocityX(100);
+            this.setVelocityX(100);
+           
         }
         if(this.cursor.up.isDown){
-            this.sprite.setVelocityY(-100);
+            this.setVelocityY(-100);
+            
         }
         else if(this.cursor.down.isDown){
-            this.sprite.setVelocityY(100);
+            this.setVelocityY(100);
+            
         }
+        if(this.skillKeys.keyQ.isDown){
+            if(!this.onSkill){
+                this.iceMagic.shootIce(this.x, this.y, this.shootDirection);
+                this.onSkill = true;
+            }  
+        }
+
+        if(this.skillKeys.keyQ.isUp){
+            this.onSkill = false;
+        }
+
 
         if(this.cursor.left.isDown){
-            this.sprite.anims.play('player_walk_left', true);
+            this.anims.play('player_walk_left', true);
+            this.shootDirection = Direction.Left;
         }
         else if(this.cursor.right.isDown){
-            this.sprite.anims.play('player_walk_right', true);
+            this.anims.play('player_walk_right', true);
+            this.shootDirection = Direction.Right;
         }
         else if(this.cursor.up.isDown){
-            this.sprite.anims.play('player_walk_up', true);
+            this.anims.play('player_walk_up', true);
+            this.shootDirection = Direction.Up;
         }
         else if(this.cursor.down.isDown){
-            this.sprite.anims.play('player_walk_down', true);
+            this.anims.play('player_walk_down', true);
+            this.shootDirection = Direction.Down;
         }
         else{
-            this.sprite.anims.stop();
+            this.anims.stop();
         }
-        // else if(this.cursor.)
     }
 
-    private animsRoutine(){
+    private createAnims(){
         const configWalkDown = {
             key: 'player_walk_down',
             frames: this.scene.anims.generateFrameNumbers('playerWalk', {start: 0, end: 2}),

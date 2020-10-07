@@ -2,18 +2,17 @@ import 'phaser';
 import Player from './player';
 
 export default class Fog extends Phaser.Scene{
-    private player: Player = new Player(this);
+    private player: Player;
 
     constructor(){
         super('fog')
         
     }
 
-    
     preload(){
-        this.player.preload();
         this.load.image('tiles', 'assets/Maps/roguelikeDungeon_transparent.png');
-        this.load.image('libs', 'assets/libs.png');
+        this.load.spritesheet("ice", "assets/Spritesheets/Magic/IcePick_64x64.png", {frameWidth: 64, frameHeight: 64});
+        this.load.spritesheet("playerWalk", "assets/Spritesheets/Player/sage_walk.png", {frameWidth: 24, frameHeight: 24});
         this.load.tilemapTiledJSON('map', 'assets/Maps/Cave.json');
     }
 
@@ -23,14 +22,12 @@ export default class Fog extends Phaser.Scene{
         const floor = map.createStaticLayer('FLOOR', tileset, 0,0);
         const walls = map.createStaticLayer('WALLS', tileset, 0,0);
         const walkable = map.createStaticLayer('WALKABLE', tileset,0,0);
-        this.player.create();
-        // this.add.image(400, 300, 'libs');
+        this.player = new Player(this, 200,200); 
     }
 
     update(time, delta){
-        this.player.input();
+        this.player.verifyInput();
     }
-
     
 }
 
