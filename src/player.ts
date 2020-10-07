@@ -11,16 +11,13 @@ export default class Player{
     }
 
     preload(){
-        this.scene.load.spritesheet("playerWalk", "assets/Spritesheets/Player/player-move.png", {frameWidth: 64, frameHeight: 64});
-        this.scene.load.spritesheet("playerStrafe", "assets/Spritesheets/Player/player-strafe.png", {frameWidth: 64, frameHeight: 64});
-        this.scene.load.spritesheet("playerDie", "assets/Spritesheets/Player/player-die.png", {frameWidth: 64, frameHeight: 64});
-        this.scene.load.spritesheet("playerCast", "assets/Spritesheets/Player/player-cast.png", {frameWidth: 64, frameHeight: 64});
-        this.scene.load.spritesheet("playerWobble", "assets/Spritesheets/Player/player-wobble.png", {frameWidth: 64, frameHeight: 64});
+        this.scene.load.spritesheet("playerWalk", "assets/Spritesheets/Player/sage_walk.png", {frameWidth: 24, frameHeight: 24});
     }
 
     create(){
         this.animsRoutine();
-        this.sprite = this.scene.physics.add.sprite(200,200, 'playerStrafe');
+        this.sprite = this.scene.physics.add.sprite(200,200, 'playerWalk');
+        this.sprite.setScale(2,2);
         this.cursor = this.scene.input.keyboard.createCursorKeys();
         
     }
@@ -40,50 +37,56 @@ export default class Player{
             this.sprite.setVelocityY(100);
         }
 
-        this.sprite.setFlip(false, false);
         if(this.cursor.left.isDown){
-            this.sprite.anims.play('player_walk');
-            this.sprite.setFlip(false, true);
+            this.sprite.anims.play('player_walk_left', true);
+        }
+        else if(this.cursor.right.isDown){
+            this.sprite.anims.play('player_walk_right', true);
+        }
+        else if(this.cursor.up.isDown){
+            this.sprite.anims.play('player_walk_up', true);
+        }
+        else if(this.cursor.down.isDown){
+            this.sprite.anims.play('player_walk_down', true);
+        }
+        else{
+            this.sprite.anims.stop();
         }
         // else if(this.cursor.)
     }
 
     private animsRoutine(){
-        const configWalk = {
-            key: 'player_walk',
-            frames: this.scene.anims.generateFrameNumbers('playerWalk', {start: 0, first: 0}),
+        const configWalkDown = {
+            key: 'player_walk_down',
+            frames: this.scene.anims.generateFrameNumbers('playerWalk', {start: 0, end: 2}),
             frameRate: 20,
             repeat: -1,
         }
-        const configStrafe = {
-            key: 'player_strafe',
-            frames: this.scene.anims.generateFrameNumbers('playerStrafe', {start: 0, first: 0}),
+        const configWalkLeft = {
+            key: 'player_walk_left',
+            frames: this.scene.anims.generateFrameNumbers('playerWalk', {start: 3, end: 5}),
             frameRate: 20,
             repeat: -1,
         }
-        const configDie = {
-            key: 'player_die',
-            frames: this.scene.anims.generateFrameNumbers('playerDie', {start: 0, first: 0}),
+        const configWalkRight = {
+            key: 'player_walk_right',
+            frames: this.scene.anims.generateFrameNumbers('playerWalk', {start: 6, end: 8}),
             frameRate: 20,
             repeat: -1,
         }
-        const configCast = {
-            key: 'player_cast',
-            frames: this.scene.anims.generateFrameNumbers('playerCast', {start: 0, first: 0}),
+        const configWalkUp = {
+            key: 'player_walk_up',
+            frames: this.scene.anims.generateFrameNumbers('playerWalk', {start: 9, end: 11}),
             frameRate: 20,
             repeat: -1,
         }
-        const configWobble = {
-            key: 'player_wobble',
-            frames: this.scene.anims.generateFrameNumbers('playerWobble', {start: 0, first: 0}),
-            frameRate: 20,
-            repeat: -1,
-        }
-        this.scene.anims.create(configWalk);
-        this.scene.anims.create(configStrafe);
-        this.scene.anims.create(configDie);
-        this.scene.anims.create(configCast);
-        this.scene.anims.create(configWobble);
+
+        this.scene.anims.create(configWalkDown);
+        this.scene.anims.create(configWalkLeft);
+        this.scene.anims.create(configWalkRight);
+        this.scene.anims.create(configWalkUp);
+        
+
     }
 
 
