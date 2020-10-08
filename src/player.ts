@@ -1,5 +1,5 @@
 import 'phaser';
-import {IceGroup} from './magic';
+import {IceGroup, FireGroup, Wind} from './magic';
 import {skillKeys, Direction} from './utils';
 
 
@@ -8,8 +8,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     private cursor: Phaser.Types.Input.Keyboard.CursorKeys;
     private skillKeys: skillKeys = {keyQ: null, keyE: null, keyR: null, keyW: null};
     private iceMagic: IceGroup;
+    private fireMagic: FireGroup;
+    private windMagic: Wind;
     private shootDirection: Direction = Direction.Down;
-    private onSkill: boolean = false;
+    private onSkillQ: boolean = false;
+    private onSkillE: boolean = false;
 
     constructor(scene: Phaser.Scene, x: number, y: number){
         super(scene, x,y, 'playerWalk');
@@ -23,6 +26,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         scene.physics.add.existing(this);
         this.createAnims();
         this.iceMagic = new IceGroup(scene);
+        this.fireMagic = new FireGroup(scene);
+        this.windMagic = new Wind(scene);
     }
 
     verifyInput(){
@@ -44,14 +49,32 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
             
         }
         if(this.skillKeys.keyQ.isDown){
-            if(!this.onSkill){
+            if(!this.onSkillQ){
                 this.iceMagic.shootIce(this.x, this.y, this.shootDirection);
-                this.onSkill = true;
+                this.onSkillQ = true;
             }  
         }
 
+        if(this.skillKeys.keyW.isDown){
+            this.fireMagic.shootFire(this.x,this.y,this.shootDirection);
+        }
+
+        if(this.skillKeys.keyE.isDown){
+            if(!this.onSkillE){
+                this.windMagic.fireWind(this.x,this.y,this.shootDirection);
+                this.onSkillE = true;
+            }
+        }
+        
+
         if(this.skillKeys.keyQ.isUp){
-            this.onSkill = false;
+            this.onSkillQ = false;
+        }
+        if(this.skillKeys.keyW.isUp){
+            this.fireMagic.hideFire();
+        }
+        if(this.skillKeys.keyE.isUp){
+            this.onSkillE = false;
         }
 
 
