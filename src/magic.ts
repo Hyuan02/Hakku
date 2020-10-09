@@ -207,3 +207,45 @@ export class Wind extends Phaser.Physics.Arcade.Sprite{
         }
     }
 }
+
+export class Ground extends Phaser.Physics.Arcade.Sprite{
+    active: boolean = false;
+    private growingRatio: number = 0.01;
+    constructor(scene, x,y){
+        super(scene, x,y, 'mageBarrier');
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+        this.setActive(false);
+        this.setVisible(false);
+        this.scene.anims.create({
+            key: 'barrierAnim',
+            frames: this.scene.anims.generateFrameNumbers('mageBarrier', {start: 12, end: 18}),
+            frameRate: 20,
+            repeat: -1,
+        });
+        this.anims.play('barrierAnim', true);
+    }
+
+    updatePosition(x,y){
+        this.setPosition(x,y);
+    }
+
+    activateBarrier(){
+        this.active = true;
+        this.setActive(true);
+        this.setVisible(true);
+    }
+
+    disableBarrier(){
+        this.setActive(false);
+        this.setVisible(false);
+        this.setScale(1,1);
+    }
+    preUpdate(time, delta){
+        super.preUpdate(time,delta);
+        if(this.active){
+            this.setScale(this.scaleX + this.growingRatio, this.scaleY + this.growingRatio);
+        }
+    }
+       
+}
