@@ -1,5 +1,5 @@
 import 'phaser';
-import {IceGroup, FireGroup, Wind} from './magic';
+import {IceGroup, FireGroup, Wind, Ground} from './magic';
 import {skillKeys, Direction} from './utils';
 
 
@@ -13,6 +13,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     private shootDirection: Direction = Direction.Down;
     private onSkillQ: boolean = false;
     private onSkillE: boolean = false;
+    private onSkillR: boolean = false;
+    private groundMagic: Ground;
 
     constructor(scene: Phaser.Scene, x: number, y: number){
         super(scene, x,y, 'playerWalk');
@@ -28,6 +30,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         this.iceMagic = new IceGroup(scene);
         this.fireMagic = new FireGroup(scene);
         this.windMagic = new Wind(scene);
+        this.groundMagic = new Ground(scene, this.x, this.y);
     }
 
     verifyInput(){
@@ -54,19 +57,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
                 this.onSkillQ = true;
             }  
         }
-
         if(this.skillKeys.keyW.isDown){
             this.fireMagic.shootFire(this.x,this.y,this.shootDirection);
         }
-
         if(this.skillKeys.keyE.isDown){
             if(!this.onSkillE){
                 this.windMagic.fireWind(this.x,this.y,this.shootDirection);
                 this.onSkillE = true;
             }
         }
-        
-
+        if(this.skillKeys.keyR.isDown){
+            if(!this.onSkillR){
+                this.groundMagic.activateBarrier();
+            }
+        }
         if(this.skillKeys.keyQ.isUp){
             this.onSkillQ = false;
         }
@@ -76,7 +80,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         if(this.skillKeys.keyE.isUp){
             this.onSkillE = false;
         }
-
+        if(this.skillKeys.keyR.isUp){
+            this.onSkillR = false;
+            this.groundMagic.disableBarrier();
+        }
 
         if(this.cursor.left.isDown){
             this.anims.play('player_walk_left', true);
@@ -133,7 +140,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
 
     }
 
-
+    preUpdate(time, delta){
+        super.preUpdate(time, delta);
+        this.groundMagic.updatePosition(this.x,this.y);
+    }
 
 
 
