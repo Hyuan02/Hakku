@@ -61,7 +61,7 @@ class Ice extends Phaser.Physics.Arcade.Sprite{
     preUpdate(time, delta){
         super.preUpdate(time, delta);
 
-        if(this.y <= 0 || this.x <= 0 || this.y >= 720 || this.x >= 1280){
+        if(this.y <= (this.scene.cameras.main.worldView.top) || this.x <= (this.scene.cameras.main.worldView.left) || this.y >= (this.scene.cameras.main.worldView.bottom) || this.x >= (this.scene.cameras.main.worldView.right)){
             this.setActive(false);
             this.setVisible(false);
         }
@@ -161,7 +161,7 @@ export class Wind extends Phaser.Physics.Arcade.Sprite{
         }
 
         if(this.onTrajectory){
-            if(this.x < 0 || this.x > 1280 || this.y < 0 || this.y > 1280){
+            if(this.y <= (this.scene.cameras.main.worldView.top) || this.x <= (this.scene.cameras.main.worldView.left) || this.y >= (this.scene.cameras.main.worldView.bottom) || this.x >= (this.scene.cameras.main.worldView.right)){
                 this.onTrajectory = false;
                 this.setVisible(false);
                 this.setActive(false);
