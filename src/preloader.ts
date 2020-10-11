@@ -15,6 +15,7 @@ export default class Preloader extends Phaser.Scene{
         this.load.spritesheet("playerWalk", "assets/Spritesheets/Player/sage_walk.png", {frameWidth: 24, frameHeight: 24});
         this.load.tilemapTiledJSON('phase1map', 'assets/cavemapexport/cavemap.json');
         this.load.image('nature_tileset', 'assets/cavemapexport/nature_tileset.png');
+        this.load.image('soft-mask', 'assets/soft-mask.png');
 
     }
 
