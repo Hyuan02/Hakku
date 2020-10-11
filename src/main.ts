@@ -18,6 +18,7 @@ const config = {
             gravity: { y: 0 }
         }
     },
+    pixelArt: true,
     scene: [Preloader,PhaseOne]
 };
 
