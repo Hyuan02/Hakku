@@ -21,7 +21,7 @@ export default class PhaseOne extends Phaser.Scene{
         this.layers.push(this.map.createStaticLayer('Rocks', tileset));
         this.layers.push(this.map.createStaticLayer('Props', tileset));
         this.layers.push(this.map.createStaticLayer('Water', tileset));
-        this.player = new Player(this, 200,200); 
+        this.player = new Player(this, 200,1800); 
         for(let i = 1; i< this.layers.length; i++){
             console.log("adding collider");
             this.layers[i].setCollisionByExclusion([-1]);
