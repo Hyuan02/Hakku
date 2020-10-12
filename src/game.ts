@@ -1,5 +1,6 @@
 import 'phaser';
 import Player from './player';
+import {WaterEnemyGroup, FireEnemyGroup} from './Enemies';
 
 export default class PhaseOne extends Phaser.Scene{
     private player: Player;
@@ -7,13 +8,40 @@ export default class PhaseOne extends Phaser.Scene{
     public layers: Array<Phaser.Tilemaps.StaticTilemapLayer> = [];
     private maskImage: Phaser.GameObjects.Image;
     private renderTexture : Phaser.GameObjects.RenderTexture;
+    private waterEnemies: WaterEnemyGroup;
+    private fireEnemies: FireEnemyGroup;
     constructor(){
         super('phase1')
         
     }
 
+    //#region PHASER_ROUTINES
+    create() {
 
-    create(){
+        this.createTileWorld();
+
+        this.player = new Player(this, 200, 1800);
+        this.addColliders();
+
+
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.cameras.main.startFollow(this.player);
+
+        this.createFogEffect();
+
+
+    }
+
+    update(time, delta){
+        this.player.verifyInput();
+        this.fireEnemies.updatePlayerX(this.player.x);
+        this.updateFog();
+       
+    }
+    //#endregion "END_PHASER ROUTINES"
+
+
+    createTileWorld(){
         this.map = this.make.tilemap({key: 'phase1map'});
         const tileset = this.map.addTilesetImage('nature_tileset');
         this.layers.push(this.map.createStaticLayer('Ground', tileset));
@@ -21,17 +49,16 @@ export default class PhaseOne extends Phaser.Scene{
         this.layers.push(this.map.createStaticLayer('Rocks', tileset));
         this.layers.push(this.map.createStaticLayer('Props', tileset));
         this.layers.push(this.map.createStaticLayer('Water', tileset));
-        this.player = new Player(this, 200,200); 
-        for(let i = 1; i< this.layers.length; i++){
-            console.log("adding collider");
-            this.layers[i].setCollisionByExclusion([-1]);
 
-            this.physics.add.collider(this.player, this.layers[i]);
-         }
 
-         this.cameras.main.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels);
-         this.cameras.main.startFollow(this.player);
 
+        const waterLayer = this.map.getObjectLayer('water_enemy');
+        const fireLayer = this.map.getObjectLayer('fire_enemy');
+        this.waterEnemies = new WaterEnemyGroup(this, waterLayer);
+        this.fireEnemies = new FireEnemyGroup(this, fireLayer);
+    }
+
+    createFogEffect(){
          const width = this.scale.width;
          const height = this.scale.height;
 
@@ -59,9 +86,8 @@ export default class PhaseOne extends Phaser.Scene{
 
     }
 
-    update(time, delta){
-        this.player.verifyInput();
 
+    updateFog(){
         if(this.maskImage){
             this.maskImage.x = this.player.x;
             this.maskImage.y = this.player.y;
@@ -76,6 +102,15 @@ export default class PhaseOne extends Phaser.Scene{
     }
 
 
+    addColliders(){
+        for(let i = 1; i< this.layers.length; i++){
+            console.log("adding collider");
+            this.layers[i].setCollisionByExclusion([-1]);
+            this.physics.add.collider(this.player, this.layers[i]);
+            if(this.layers[i].layer.name != "Water")
+                this.physics.add.collider(this.waterEnemies, this.layers[i]);
+         }
+    }
 
 
 }
