@@ -19,7 +19,6 @@ export default class PhaseOne extends Phaser.Scene{
 
     //#region PHASER_ROUTINES
     create() {
-
         this.createTileWorld();
 
         this.player = new Player(this, 200, 1800);
@@ -30,8 +29,7 @@ export default class PhaseOne extends Phaser.Scene{
         this.cameras.main.startFollow(this.player);
 
         this.createFogEffect();
-
-
+        this.cameras.main.fadeIn(1000,0);
     }
 
     update(time, delta){
