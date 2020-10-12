@@ -6,7 +6,18 @@ export default class Preloader extends Phaser.Scene{
         super('Preloader');
     }
     preload(){
-        
+        this.load.bitmapFont('vcr', 'assets/fonts/vcr_osd.png', 'assets/fonts/vcr_osd.xml');
+        this.load.atlasXML('ui', 'assets/Spritesheets/UI/sheet_white2x.png', 'assets/Spritesheets/UI/sheet_white2x.xml');
+        this.load.image("bg10", "assets/Spritesheets/SplashScreen/Layer_0010_1.png");
+        this.load.image("bg9", "assets/Spritesheets/SplashScreen/Layer_0009_2.png");
+        this.load.image("bg8", "assets/Spritesheets/SplashScreen/Layer_0008_3.png");
+        this.load.image("bg7", "assets/Spritesheets/SplashScreen/Layer_0007_Lights.png");
+        this.load.image("bg6", "assets/Spritesheets/SplashScreen/Layer_0006_4.png");
+        this.load.image("bg5", "assets/Spritesheets/SplashScreen/Layer_0005_5.png");
+        this.load.image("bg4", "assets/Spritesheets/SplashScreen/Layer_0004_Lights.png");
+        this.load.image("bg3", "assets/Spritesheets/SplashScreen/Layer_0003_6.png");
+        this.load.image("bg2", "assets/Spritesheets/SplashScreen/Layer_0002_7.png");
+        this.load.image("bg1", "assets/Spritesheets/SplashScreen/Layer_0001_8.png");
         this.load.spritesheet("ice", "assets/Spritesheets/Magic/IcePick_64x64.png", {frameWidth: 64, frameHeight: 64});
         this.load.spritesheet("fire", "assets/Spritesheets/Magic/FireCast_96x96.png", {frameWidth: 96, frameHeight: 96});
         this.load.spritesheet('windIdle', "assets/Spritesheets/Magic/TornadoLoop_96x96.png", {frameWidth: 96, frameHeight: 96});
