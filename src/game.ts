@@ -1,6 +1,6 @@
 import 'phaser';
 import Player from './player';
-import WaterEnemyGroup from './waterEnemy';
+import {WaterEnemyGroup, FireEnemyGroup} from './Enemies';
 
 export default class PhaseOne extends Phaser.Scene{
     private player: Player;
@@ -9,31 +9,32 @@ export default class PhaseOne extends Phaser.Scene{
     private maskImage: Phaser.GameObjects.Image;
     private renderTexture : Phaser.GameObjects.RenderTexture;
     private waterEnemies: WaterEnemyGroup;
+    private fireEnemies: FireEnemyGroup;
     constructor(){
         super('phase1')
         
     }
 
     //#region PHASER_ROUTINES
-    create(){
-        
+    create() {
+
         this.createTileWorld();
 
-        this.player = new Player(this, 200,1800); 
+        this.player = new Player(this, 200, 1800);
         this.addColliders();
 
 
-         this.cameras.main.setBounds(0,0, this.map.widthInPixels, this.map.heightInPixels);
-         this.cameras.main.startFollow(this.player);
-         
-         this.createFogEffect();
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.cameras.main.startFollow(this.player);
 
-         
+        this.createFogEffect();
+
+
     }
 
     update(time, delta){
         this.player.verifyInput();
-        
+        this.fireEnemies.updatePlayerX(this.player.x);
         this.updateFog();
        
     }
@@ -52,7 +53,9 @@ export default class PhaseOne extends Phaser.Scene{
 
 
         const waterLayer = this.map.getObjectLayer('water_enemy');
+        const fireLayer = this.map.getObjectLayer('fire_enemy');
         this.waterEnemies = new WaterEnemyGroup(this, waterLayer);
+        this.fireEnemies = new FireEnemyGroup(this, fireLayer);
     }
 
     createFogEffect(){

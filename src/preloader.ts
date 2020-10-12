@@ -9,6 +9,7 @@ export default class Preloader extends Phaser.Scene{
     preload(){
         this.load.spritesheet("ice", "assets/Spritesheets/Magic/IcePick_64x64.png", {frameWidth: 64, frameHeight: 64});
         this.load.spritesheet("fire", "assets/Spritesheets/Magic/FireCast_96x96.png", {frameWidth: 96, frameHeight: 96});
+        this.load.spritesheet("fireBall", "assets/Spritesheets/Magic/FireBall_2_64x64.png", {frameWidth: 64, frameHeight: 64});
         this.load.spritesheet('windIdle', "assets/Spritesheets/Magic/TornadoLoop_96x96.png", {frameWidth: 96, frameHeight: 96});
         this.load.spritesheet('windMoving', "assets/Spritesheets/Magic/TornadoMoving_96x96.png", {frameWidth: 96, frameHeight: 96});
         this.load.spritesheet('mageBarrier', 'assets/Spritesheets/Magic/LightCast_96.png', {frameWidth: 96, frameHeight: 96});
