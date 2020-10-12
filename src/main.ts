@@ -20,7 +20,7 @@ const config = {
         }
     },
     pixelArt: true,
-    scene: [Preloader,PhaseOne,Menu]
+    scene: [Preloader,Menu,PhaseOne]
 };
 
 const game = new Phaser.Game(config);
