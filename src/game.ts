@@ -1,6 +1,6 @@
 import 'phaser';
 import Player from './player';
-import {WaterEnemyGroup, FireEnemyGroup} from './Enemies';
+import {WaterEnemyGroup, FireEnemyGroup, AirEnemyGroup, GroundEnemyGroup} from './Enemies';
 
 export default class PhaseOne extends Phaser.Scene{
     private player: Player;
@@ -10,6 +10,8 @@ export default class PhaseOne extends Phaser.Scene{
     private renderTexture : Phaser.GameObjects.RenderTexture;
     private waterEnemies: WaterEnemyGroup;
     private fireEnemies: FireEnemyGroup;
+    private airEnemies: AirEnemyGroup;
+    private groundEnemies: GroundEnemyGroup;
     constructor(){
         super('phase1')
         
@@ -34,7 +36,7 @@ export default class PhaseOne extends Phaser.Scene{
 
     update(time, delta){
         this.player.verifyInput();
-        this.fireEnemies.updatePlayerX(this.player.x);
+        this.updatePlayerDataToEnemy();
         this.updateFog();
        
     }
@@ -54,8 +56,12 @@ export default class PhaseOne extends Phaser.Scene{
 
         const waterLayer = this.map.getObjectLayer('water_enemy');
         const fireLayer = this.map.getObjectLayer('fire_enemy');
+        const airLayer = this.map.getObjectLayer('wind_enemy');
+        const groundLayer = this.map.getObjectLayer('ground_enemy');
         this.waterEnemies = new WaterEnemyGroup(this, waterLayer);
         this.fireEnemies = new FireEnemyGroup(this, fireLayer);
+        this.airEnemies = new AirEnemyGroup(this, airLayer);
+        this.groundEnemies = new GroundEnemyGroup(this, groundLayer);
     }
 
     createFogEffect(){
@@ -110,6 +116,13 @@ export default class PhaseOne extends Phaser.Scene{
             if(this.layers[i].layer.name != "Water")
                 this.physics.add.collider(this.waterEnemies, this.layers[i]);
          }
+    }
+
+
+    updatePlayerDataToEnemy(){
+        this.fireEnemies.updatePlayerX(this.player.x);
+        this.airEnemies.updatePlayerData(this.player.x, this.player.y);
+        this.groundEnemies.updatePlayerData(this.player.x, this.player.y);
     }
 
 

@@ -29,8 +29,8 @@ export default class Preloader extends Phaser.Scene{
         this.load.tilemapTiledJSON('phase1map', 'assets/cavemapexport/cavemap.json');
         this.load.image('nature_tileset', 'assets/cavemapexport/nature_tileset.png');
         this.load.image('soft-mask', 'assets/soft-mask.png');
-        this.load.spritesheet('air-monster', 'assets/Monsters/air-miniboss.png', {frameWidth: 72, frameHeight: 109});
-        this.load.spritesheet('earth-monster', 'assets/Monsters/earth-common.png', {frameWidth: 42, frameHeight: 29});
+        this.load.spritesheet('air-monster', 'assets/Monsters/air-grunt.png', {frameWidth: 74, frameHeight: 64});
+        this.load.spritesheet('earth-monster', 'assets/Monsters/earth-support.png', {frameWidth: 76, frameHeight: 37});
         this.load.spritesheet('fire-monster', 'assets/Monsters/fire-miniboss.png', {frameWidth: 88, frameHeight: 49});
         this.load.spritesheet('water-monster', 'assets/Monsters/neutral.png', {frameWidth: 32, frameHeight: 30});
         
