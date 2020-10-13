@@ -15,6 +15,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     private onSkillE: boolean = false;
     private onSkillR: boolean = false;
     private groundMagic: Ground;
+    
+    private hp: number = 2;
+    private damaged: boolean = false;
+    private readonly timeOnDamage: number = 0.5;
+    private timeSpent: number = 0.0;
+    private readonly bounceVelocity = 70;
+
+
+
 
     constructor(scene: Phaser.Scene, x: number, y: number){
         super(scene, x,y, 'playerWalk');
@@ -34,6 +43,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     }
 
     verifyInput(){
+        if(this.damaged)
+            return;
+        
         this.setVelocity(0);
         if(this.cursor.left.isDown){
             this.setVelocityX(-100);
@@ -142,6 +154,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
 
     preUpdate(time, delta){
         super.preUpdate(time, delta);
+        if(this.damaged){
+            if(this.timeSpent < this.timeOnDamage){
+                this.timeSpent += delta/1000;
+            }
+            else{
+                this.timeSpent = 0;
+                this.damaged = false;
+                this.setTexture('playerWalk');
+            }
+        }
         this.groundMagic.updatePosition(this.x,this.y);
     }
 
@@ -165,5 +187,27 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
             object1?.destroyEnemy();
         }
     }
+
+
+
+    onEnemyHit(object1, object2){
+        if(!this.damaged){
+            let signX, signY;
+            if(object1 instanceof Player){
+                signX = Math.sign(object1.x - object2.x);
+                signY = Math.sign(object1.y - object2.y); 
+            }
+            else{
+                signX = Math.sign(object2.x - object1.x);
+                signY = Math.sign(object2.y - object1.y); 
+            }
+            this.hp -= 1; 
+            this.damaged = true;
+            this.setVelocity(this.bounceVelocity * signX, this.bounceVelocity * signY);
+            this.anims.stop();
+            this.setTexture('playerDamage');
+        }
+    }
+
 
 }

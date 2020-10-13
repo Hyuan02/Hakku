@@ -124,6 +124,13 @@ export default class PhaseOne extends Phaser.Scene{
             this.groundEnemies,
             this.airEnemies
          );
+
+
+         this.physics.add.overlap([this.waterEnemies,
+            this.fireEnemies,
+            this.groundEnemies,
+            this.airEnemies
+        ], this.player, this.player.onEnemyHit, null, this.player);
     }
 
 
