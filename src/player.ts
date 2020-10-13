@@ -146,5 +146,24 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     }
 
 
+    atributeWeaponsToEnemies(waterGroup: Phaser.Physics.Arcade.Group,fireGroup: Phaser.Physics.Arcade.Group,
+        earthGroup: Phaser.Physics.Arcade.Group,windGroup: Phaser.Physics.Arcade.Group){
+            this.scene.physics.add.overlap(waterGroup, this.fireMagic, this.onSkillRight);
+            this.scene.physics.add.overlap(fireGroup, this.iceMagic, this.onSkillRight);
+            this.scene.physics.add.overlap(earthGroup, this.windMagic, this.onSkillRight);
+            this.scene.physics.add.overlap(windGroup, this.groundMagic, this.onSkillRight);
+    }
+
+
+
+    onSkillRight(object1, enemy): void{
+        if(enemy?.destroyEnemy){
+            enemy.destroyEnemy();
+            return;
+        }
+        else if(object1?.destroyEnemy){
+            object1?.destroyEnemy();
+        }
+    }
 
 }
