@@ -34,9 +34,7 @@ class Ice extends Phaser.Physics.Arcade.Sprite{
     }
 
     shoot(x: number,y: number, direction: Direction){
-        this.body.reset(x,y);
-        this.setActive(true);
-        this.setVisible(true);
+        this.enableBody(true, x,y, true, true);
         this.play('iceAnim', true);
         switch(direction){
             case Direction.Up:
@@ -57,13 +55,12 @@ class Ice extends Phaser.Physics.Arcade.Sprite{
             break;
         }
     }
-    
+
     preUpdate(time, delta){
         super.preUpdate(time, delta);
 
         if(this.y <= (this.scene.cameras.main.worldView.top) || this.x <= (this.scene.cameras.main.worldView.left) || this.y >= (this.scene.cameras.main.worldView.bottom) || this.x >= (this.scene.cameras.main.worldView.right)){
-            this.setActive(false);
-            this.setVisible(false);
+            this.disableBody(true, true);
         }
     }
 }
@@ -85,6 +82,10 @@ export class FireGroup extends Phaser.Physics.Arcade.Group{
             key: 'fire'
         });
         this.active = false;
+        this.children.each((e)=>{
+            const body = e.body as Phaser.Physics.Arcade.Body;
+            body.enable = false; 
+        });
     }
     shootFire(x: number, y: number, direction: Direction){
         let incrementX = 0;
@@ -109,11 +110,19 @@ export class FireGroup extends Phaser.Physics.Arcade.Group{
                 this.setVisible(true);
             break;
         }
+        this.children.each((e)=>{
+            const body = e.body as Phaser.Physics.Arcade.Body;
+            body.enable = true; 
+        });
     }
 
     hideFire(){
         this.active = false;
         this.setVisible(false);
+        this.children.each((e)=>{
+            const body = e.body as Phaser.Physics.Arcade.Body;
+            body.enable = false; 
+        })
     }
 
 }
@@ -123,8 +132,8 @@ class Fire extends Phaser.Physics.Arcade.Sprite{
         super(scene, x, y, 'fire');
         this.play('fireAnim', true);
     }
-    
-    
+
+
 }
 
 
@@ -137,8 +146,7 @@ export class Wind extends Phaser.Physics.Arcade.Sprite{
         super(scene, 0, 0, 'windIdle');
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setActive(false);
-        this.setVisible(false);
+        this.disableBody(true, true);
         this.scene.anims.create({
             key: 'windIdleAnim',
             frames: this.scene.anims.generateFrameNumbers('windIdle', {start: 0, end: 6}),
@@ -156,16 +164,15 @@ export class Wind extends Phaser.Physics.Arcade.Sprite{
         super.preUpdate(time, delta);
         // console.log("updating");
         if(this.growing){
-            console.log("Growing");
             this.setScale(this.scaleX + this.growingRatio, this.scaleY + this.growingRatio);
+            this.y-=this.growingRatio * 10;
         }
 
         if(this.onTrajectory){
             if(this.y <= (this.scene.cameras.main.worldView.top) || this.x <= (this.scene.cameras.main.worldView.left) || this.y >= (this.scene.cameras.main.worldView.bottom) || this.x >= (this.scene.cameras.main.worldView.right)){
                 this.onTrajectory = false;
-                this.setVisible(false);
-                this.setActive(false);
-                this.setVelocity(0,0);
+                this.disableBody(true, true);
+                this.setVelocity(0);
             }
         }
     }
@@ -173,11 +180,8 @@ export class Wind extends Phaser.Physics.Arcade.Sprite{
     fireWind(x: number, y: number, direction: Direction){
         if(!this.onTrajectory){
             if(!this.growing){
-                this.setPosition(x,y);
+                this.enableBody(true, x, y, true, true);
                 this.setScale(1,1);
-                this.setActive(true);
-                this.setVisible(true);
-                console.log("Activating");
                 this.anims.play('windIdleAnim', true);
                 this.growing = true;
             }
@@ -215,8 +219,7 @@ export class Ground extends Phaser.Physics.Arcade.Sprite{
         super(scene, x,y, 'mageBarrier');
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setActive(false);
-        this.setVisible(false);
+        this.disableBody(true, true);
         this.scene.anims.create({
             key: 'barrierAnim',
             frames: this.scene.anims.generateFrameNumbers('mageBarrier', {start: 12, end: 18}),
@@ -231,15 +234,12 @@ export class Ground extends Phaser.Physics.Arcade.Sprite{
     }
 
     activateBarrier(){
-        this.active = true;
-        this.setActive(true);
-        this.setVisible(true);
+        this.enableBody(true, this.x, this.y, true, true);
     }
 
     disableBarrier(){
-        this.setActive(false);
-        this.setVisible(false);
         this.setScale(1,1);
+        this.disableBody(true, true);
     }
     preUpdate(time, delta){
         super.preUpdate(time,delta);
@@ -247,5 +247,5 @@ export class Ground extends Phaser.Physics.Arcade.Sprite{
             this.setScale(this.scaleX + this.growingRatio, this.scaleY + this.growingRatio);
         }
     }
-       
+
 }

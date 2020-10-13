@@ -68,6 +68,10 @@ class WaterEnemy extends Phaser.Physics.Arcade.Sprite{
             }
         }
     }
+
+    destroyEnemy(){
+        this.disableBody(true, true);
+    }
 }
 
 
@@ -141,6 +145,10 @@ class FireEnemy extends Phaser.Physics.Arcade.Sprite{
             this.fireBall.setFire(this.x,this.y, Math.sign(this.playerX - this.x));
         }
     }
+
+    destroyEnemy(){
+        this.disableBody(true, true);
+    }
 }
 
 
@@ -181,6 +189,10 @@ class FireBallEnemy extends Phaser.Physics.Arcade.Sprite{
             this.isMoving = false;
             this.setVelocity(0);
         }
+    }
+
+    destroyEnemy(){
+        this.disableBody(true, true);
     }
 
 }
@@ -258,6 +270,10 @@ class AirEnemy extends Phaser.Physics.Arcade.Sprite{
             this.moving = true;
         }
     }
+
+    destroyEnemy(){
+        this.disableBody(true, true);
+    }
 }
 
 
@@ -305,6 +321,10 @@ class GroundEnemy extends Phaser.Physics.Arcade.Sprite{
             if(this.scale < this.maxScale)
                 this.setScale(this.scale + this.scaleFactor);
         }
+    }
+
+    destroyEnemy(){
+        this.disableBody(true, true);
     }
 
 }

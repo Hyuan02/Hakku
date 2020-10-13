@@ -12,6 +12,7 @@ export default class PhaseOne extends Phaser.Scene{
     private fireEnemies: FireEnemyGroup;
     private airEnemies: AirEnemyGroup;
     private groundEnemies: GroundEnemyGroup;
+    private ready: boolean = false;
     constructor(){
         super('phase1')
         
@@ -20,19 +21,22 @@ export default class PhaseOne extends Phaser.Scene{
     //#region PHASER_ROUTINES
     create() {
         this.createTileWorld();
-
         this.player = new Player(this, 200, 1800);
-        this.addColliders();
-
-
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(this.player);
-
         this.createFogEffect();
-        this.cameras.main.fadeIn(1000,0);
+        this.addColliders();
+        this.ready = true;
+        this.cameras.main.visible = true;
+        
+
+        
+        
     }
 
     update(time, delta){
+        if(!this.ready)
+            return;
         this.player.verifyInput();
         this.updatePlayerDataToEnemy();
         this.updateFog();
@@ -114,6 +118,19 @@ export default class PhaseOne extends Phaser.Scene{
             if(this.layers[i].layer.name != "Water")
                 this.physics.add.collider(this.waterEnemies, this.layers[i]);
          }
+         this.player.atributeWeaponsToEnemies(
+            this.waterEnemies,
+            this.fireEnemies,
+            this.groundEnemies,
+            this.airEnemies
+         );
+
+
+         this.physics.add.overlap([this.waterEnemies,
+            this.fireEnemies,
+            this.groundEnemies,
+            this.airEnemies
+        ], this.player, this.player.onEnemyHit, null, this.player);
     }
 
 
