@@ -36,6 +36,7 @@ class WaterEnemy extends Phaser.Physics.Arcade.Sprite{
     constructor(scene: Phaser.Scene, x, y){
         super(scene, x,y, 'water-monster');
         scene.physics.add.existing(this);
+        this.type = "Water"
     }
 
 
@@ -77,7 +78,7 @@ class WaterEnemy extends Phaser.Physics.Arcade.Sprite{
 
 
 export class FireEnemyGroup extends Phaser.Physics.Arcade.Group{
-    constructor(scene: Phaser.Scene, tiles: Phaser.Tilemaps.ObjectLayer){
+    constructor(scene: Phaser.Scene, tiles: Phaser.Tilemaps.ObjectLayer, player: Phaser.Physics.Arcade.Sprite){
         super(scene.physics.world, scene);
         this.scene.anims.create({
             key: 'fireBallEnemyAnim',
@@ -102,11 +103,19 @@ export class FireEnemyGroup extends Phaser.Physics.Arcade.Group{
             }
         );
         this.playAnimation('fireEnemyAnim');
+        this.updatePlayerCollider(player);
     }
 
 
     updatePlayerX(x: number){
         this.propertyValueSet('playerX', x);
+    }
+
+    updatePlayerCollider(player){
+        this.getChildren().forEach((e: FireEnemy)=>{
+            //@ts-ignore
+            this.scene.physics.add.overlap(e.fireBall, player, (object1, object2)=>{player.onEnemyHit(object1, object2); this.scene.playEnemyHit(object1,object2)},null, player);
+        });
     }
 }
 
@@ -118,11 +127,12 @@ class FireEnemy extends Phaser.Physics.Arcade.Sprite{
     private actualTimeShoot: number = 0;
     private velocityY: number = 30;
     public playerX: number = 1;
-    private fireBall: FireBallEnemy;
+    public fireBall: FireBallEnemy;
 
     constructor(scene: Phaser.Scene, x: number, y: number){
         super(scene, x, y, 'fire-monster');
         scene.physics.add.existing(this);
+        this.type = "Fire";
         this.fireBall = new FireBallEnemy(scene, x,y);
     }
 
@@ -163,16 +173,14 @@ class FireBallEnemy extends Phaser.Physics.Arcade.Sprite{
         scene.add.existing(this);
         this.active = false;
         this.visible = false;
+        this.type = "Fire";
         this.anims.play('fireBallEnemyAnim', true);
     }
 
     setFire(x: number, y: number, sign: number){
         if (!this.isMoving) {
             this.setFlipX(sign>0? false: true);
-            this.active = true;
-            this.visible = true;
-            this.x = x;
-            this.y = y;
+            this.enableBody(true, x,y, true, true);
             this.actualXDistance = x;
             this.setVelocityX(this.xVelocity * sign)
             this.isMoving = true;
@@ -184,8 +192,7 @@ class FireBallEnemy extends Phaser.Physics.Arcade.Sprite{
     preUpdate(time, delta){
         super.preUpdate(time, delta);
         if(Math.abs(this.actualXDistance - this.x) > this.xRange){
-            this.active = false;
-            this.visible = false;
+            this.disableBody(true, true);
             this.isMoving = false;
             this.setVelocity(0);
         }
@@ -237,6 +244,7 @@ class AirEnemy extends Phaser.Physics.Arcade.Sprite{
     constructor(scene: Phaser.Scene, x: number, y: number){
         super(scene, x,y, 'air-monster');
         scene.physics.add.existing(this);
+        this.type = "Air";
     }
 
 
@@ -312,6 +320,7 @@ class GroundEnemy extends Phaser.Physics.Arcade.Sprite{
 
     constructor(scene: Phaser.Scene, x: number, y: number){
         super(scene, x,y, 'earth-monster');
+        this.type = "Ground";
         this.setScale(0.05);
     }
 

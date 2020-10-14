@@ -34,6 +34,16 @@ export default class Preloader extends Phaser.Scene{
         this.load.spritesheet('earth-monster', 'assets/Monsters/earth-support.png', {frameWidth: 76, frameHeight: 37});
         this.load.spritesheet('fire-monster', 'assets/Monsters/fire-miniboss.png', {frameWidth: 88, frameHeight: 49});
         this.load.spritesheet('water-monster', 'assets/Monsters/neutral.png', {frameWidth: 32, frameHeight: 30});
+        this.load.audio('Magic1', 'assets/Sounds/Magic.mp3');
+        this.load.audio('Magic2', 'assets/Sounds/Magic2.mp3');
+        this.load.audio('Magic3', 'assets/Sounds/Thunder.mp3');
+        this.load.audio('Magic4', 'assets/Sounds/Magic3.mp3');
+        this.load.audio('Monster1', 'assets/Sounds/Monster1.mp3');
+        this.load.audio('Monster2', 'assets/Sounds/Monster2.mp3');
+        this.load.audio('Monster3', 'assets/Sounds/Monster3.mp3');
+        this.load.audio('Monster4', 'assets/Sounds/Monster4.mp3');
+        this.load.audio('ForMe', 'assets/Sounds/For Me.mp3');
+        this.load.audio('Sunstrider', 'assets/Sounds/Sunstrider.mp3');
         
 
     }
