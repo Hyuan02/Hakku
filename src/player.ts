@@ -1,6 +1,7 @@
 import 'phaser';
 import {IceGroup, FireGroup, Wind, Ground} from './magic';
 import {skillKeys, Direction} from './utils';
+import {Subject} from 'rxjs'
 
 
 export default class Player extends Phaser.Physics.Arcade.Sprite{
@@ -17,12 +18,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     private groundMagic: Ground;
     
     private hp: number = 2;
-    private damaged: boolean = false;
+    public damaged: boolean = false;
     private readonly timeOnDamage: number = 0.5;
     private timeSpent: number = 0.0;
     private readonly bounceVelocity = 70;
-
-
+    magicSubject: Subject<string> = new Subject<string>();
+    
 
 
     constructor(scene: Phaser.Scene, x: number, y: number){
@@ -66,21 +67,25 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         if(this.skillKeys.keyQ.isDown){
             if(!this.onSkillQ){
                 this.iceMagic.shootIce(this.x, this.y, this.shootDirection);
+                this.magicSubject.next('ice');
                 this.onSkillQ = true;
             }  
         }
         if(this.skillKeys.keyW.isDown){
             this.fireMagic.shootFire(this.x,this.y,this.shootDirection);
+            this.magicSubject.next('fire');
         }
         if(this.skillKeys.keyE.isDown){
             if(!this.onSkillE){
                 this.windMagic.fireWind(this.x,this.y,this.shootDirection);
+                this.magicSubject.next('wind');
                 this.onSkillE = true;
             }
         }
         if(this.skillKeys.keyR.isDown){
             if(!this.onSkillR){
                 this.groundMagic.activateBarrier();
+                this.magicSubject.next('ground');
             }
         }
         if(this.skillKeys.keyQ.isUp){
@@ -195,11 +200,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
             let signX, signY;
             if(object1 instanceof Player){
                 signX = Math.sign(object1.x - object2.x);
-                signY = Math.sign(object1.y - object2.y); 
+                signY = Math.sign(object1.y - object2.y);
             }
             else{
                 signX = Math.sign(object2.x - object1.x);
-                signY = Math.sign(object2.y - object1.y); 
+                signY = Math.sign(object2.y - object1.y);
             }
             this.hp -= 1; 
             this.damaged = true;

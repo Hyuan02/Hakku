@@ -1,6 +1,8 @@
 import 'phaser';
+import {Subject} from 'rxjs';
 import Player from './player';
 import {WaterEnemyGroup, FireEnemyGroup, AirEnemyGroup, GroundEnemyGroup} from './Enemies';
+import SoundManager from './SoundManager';
 
 export default class PhaseOne extends Phaser.Scene{
     private player: Player;
@@ -12,6 +14,8 @@ export default class PhaseOne extends Phaser.Scene{
     private fireEnemies: FireEnemyGroup;
     private airEnemies: AirEnemyGroup;
     private groundEnemies: GroundEnemyGroup;
+    enemySubject: Subject<string> = new Subject<string>();
+    private soundManager: SoundManager;
     private ready: boolean = false;
     constructor(){
         super('phase1')
@@ -22,16 +26,14 @@ export default class PhaseOne extends Phaser.Scene{
     create() {
         this.createTileWorld();
         this.player = new Player(this, 200, 1800);
+        this.instatiateEnemies();
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(this.player);
         this.createFogEffect();
         this.addColliders();
         this.ready = true;
         this.cameras.main.visible = true;
-        
-
-        
-        
+        this.soundManager = new SoundManager(this.player.magicSubject, this.enemySubject, this.game);
     }
 
     update(time, delta){
@@ -56,12 +58,16 @@ export default class PhaseOne extends Phaser.Scene{
 
 
 
+        
+    }
+
+    instatiateEnemies(){
         const waterLayer = this.map.getObjectLayer('water_enemy');
         const fireLayer = this.map.getObjectLayer('fire_enemy');
         const airLayer = this.map.getObjectLayer('wind_enemy');
         const groundLayer = this.map.getObjectLayer('ground_enemy');
         this.waterEnemies = new WaterEnemyGroup(this, waterLayer);
-        this.fireEnemies = new FireEnemyGroup(this, fireLayer);
+        this.fireEnemies = new FireEnemyGroup(this, fireLayer, this.player);
         this.airEnemies = new AirEnemyGroup(this, airLayer);
         this.groundEnemies = new GroundEnemyGroup(this, groundLayer);
     }
@@ -112,7 +118,6 @@ export default class PhaseOne extends Phaser.Scene{
 
     addColliders(){
         for(let i = 1; i< this.layers.length; i++){
-            console.log("adding collider");
             this.layers[i].setCollisionByExclusion([-1]);
             this.physics.add.collider(this.player, this.layers[i]);
             if(this.layers[i].layer.name != "Water")
@@ -130,7 +135,10 @@ export default class PhaseOne extends Phaser.Scene{
             this.fireEnemies,
             this.groundEnemies,
             this.airEnemies
-        ], this.player, this.player.onEnemyHit, null, this.player);
+        ], this.player, (object1, object2)=>{this.player.onEnemyHit(object1, object2); 
+            this.playEnemyHit(object1, object2);
+        }, null, this);
+
     }
 
 
@@ -140,6 +148,11 @@ export default class PhaseOne extends Phaser.Scene{
         this.groundEnemies.updatePlayerData(this.player.x, this.player.y);
     }
 
+
+    playEnemyHit(object1, object2){
+        let enemy = object1 instanceof Player? object2: object1;
+        this.enemySubject.next(enemy.type);
+    }
 
 }
 

@@ -4,6 +4,7 @@ export default class Menu extends Phaser.Scene {
     soundBtn: Phaser.GameObjects.Image;
     muteBtn: Phaser.GameObjects.Image;
     enabledsoundBtn: boolean = true;
+    mainSound: Phaser.Sound.BaseSound;
     constructor(){
         super('menu')
     }
@@ -16,7 +17,7 @@ export default class Menu extends Phaser.Scene {
         this.listenSoundBtnGame();
         this.listenMuteBtnGame();
         this.listenStartGame();
-       
+        this.mainSound = this.game.sound.add("Sunstrider");
     }
 
     addBackgroundImages(){
@@ -65,6 +66,7 @@ export default class Menu extends Phaser.Scene {
 
     listenStartGame(){
         this.start.on('pointerdown', () => {
+            this.mainSound.stop();
             this.cameras.main.fadeOut(1000,0,0,0); 
             this.cameras.main
             .once( Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,(cam,effect) => {
@@ -77,6 +79,7 @@ export default class Menu extends Phaser.Scene {
 
         this.soundBtn.on('pointerdown', () => {
             this.soundBtn.setVisible(false);
+            this.sound.mute = true;
             this.muteBtn.setVisible(true);
         });
     }
@@ -86,6 +89,10 @@ export default class Menu extends Phaser.Scene {
         this.muteBtn.on('pointerdown', () => {
             this.muteBtn.setVisible(false);
             this.soundBtn.setVisible(true);
+            this.sound.mute = false;
+            if(!this.mainSound.isPlaying)
+                this.mainSound.play({loop: true});
+            
         });
     }
 
