@@ -3,6 +3,7 @@ import './game';
 import PhaseOne from './game';
 import GameOver from './gameOver';
 import Menu from './menu';
+import UIScene from './UIScene';
 import Preloader from './preloader';
 
 const config = {
@@ -21,7 +22,7 @@ const config = {
         }
     },
     pixelArt: true,
-    scene: [Preloader,Menu,PhaseOne,GameOver]
+    scene: [Preloader,Menu,PhaseOne,GameOver, UIScene]
 };
 
 const game = new Phaser.Game(config);

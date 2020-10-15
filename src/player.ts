@@ -1,7 +1,6 @@
 import 'phaser';
 import {IceGroup, FireGroup, Wind, Ground} from './magic';
 import {skillKeys, Direction} from './utils';
-import {Subject} from 'rxjs'
 
 
 export default class Player extends Phaser.Physics.Arcade.Sprite{
@@ -23,7 +22,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     private readonly timeOnDamage: number = 0.5;
     private timeSpent: number = 0.0;
     private readonly bounceVelocity = 70;
-    magicSubject: Subject<string> = new Subject<string>();
     
 
 
@@ -68,25 +66,27 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         if(this.skillKeys.keyQ.isDown){
             if(!this.onSkillQ){
                 this.iceMagic.shootIce(this.x, this.y, this.shootDirection);
-                this.magicSubject.next('ice');
+                this.scene.game.events.emit('playMagic', 'ice');
                 this.onSkillQ = true;
             }  
         }
         if(this.skillKeys.keyW.isDown){
             this.fireMagic.shootFire(this.x,this.y,this.shootDirection);
-            this.magicSubject.next('fire');
+            this.scene.game.events.emit('playMagic', 'fire');
+
         }
         if(this.skillKeys.keyE.isDown){
             if(!this.onSkillE){
                 this.windMagic.fireWind(this.x,this.y,this.shootDirection);
-                this.magicSubject.next('wind');
+                this.scene.game.events.emit('playMagic', 'wind');
+
                 this.onSkillE = true;
             }
         }
         if(this.skillKeys.keyR.isDown){
             if(!this.onSkillR){
                 this.groundMagic.activateBarrier();
-                this.magicSubject.next('ground');
+                this.scene.game.events.emit('playMagic', 'ground');
             }
         }
         if(this.skillKeys.keyQ.isUp){
@@ -226,6 +226,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
                 this.anims.stop();
                 this.setTexture('playerDamage');
             }
+            this.scene.game.events.emit("updateLife", this.hp);
+
             
         }
     }

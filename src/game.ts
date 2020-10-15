@@ -1,5 +1,4 @@
 import 'phaser';
-import {Subject} from 'rxjs';
 import Player from './player';
 import {WaterEnemyGroup, FireEnemyGroup, AirEnemyGroup, GroundEnemyGroup} from './Enemies';
 import SoundManager from './SoundManager';
@@ -14,7 +13,6 @@ export default class PhaseOne extends Phaser.Scene{
     private fireEnemies: FireEnemyGroup;
     private airEnemies: AirEnemyGroup;
     private groundEnemies: GroundEnemyGroup;
-    enemySubject: Subject<string> = new Subject<string>();
     private soundManager: SoundManager;
     private ready: boolean = false;
     constructor(){
@@ -26,6 +24,7 @@ export default class PhaseOne extends Phaser.Scene{
     create() {
         this.game.events.on("GameOver", this.onGameOver, this);
         this.layers = new Array<Phaser.Tilemaps.StaticTilemapLayer>();
+        this.scene.launch("UIScene");
         this.createTileWorld();
         this.player = new Player(this, 200, 1800);
         this.instatiateEnemies();
@@ -35,8 +34,10 @@ export default class PhaseOne extends Phaser.Scene{
         this.addColliders();
         this.ready = true;
         this.cameras.main.visible = true;
-        this.soundManager = new SoundManager(this.player.magicSubject, this.enemySubject, this.game);
-        console.log(this.game);
+        this.soundManager = new SoundManager(this.game);
+        
+
+        
     }
 
     update(time, delta){
@@ -158,7 +159,7 @@ export default class PhaseOne extends Phaser.Scene{
     playEnemyHit(object1, object2){
         let enemy = object1 instanceof Player? object2: object1;
         if (!this.player.dead)
-            this.enemySubject.next(enemy.type);
+        this.game.events.emit("soundEnemy", enemy.type);
     }
 
 
@@ -167,7 +168,9 @@ export default class PhaseOne extends Phaser.Scene{
         this.ready= false;
         this.soundManager?.onGameOver();
         this.soundManager = null;
+        this.scene.stop("UIScene");
         this.scene.start("gameOver");
+        
     }
 
 }
