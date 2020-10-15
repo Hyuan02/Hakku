@@ -29,6 +29,6 @@ export default class UIScene extends Phaser.Scene{
             break;
         }
 
-        this.lifeText.text = " : " + quantity;
+        this.lifeText.text = " : " + (quantity > 0 ? quantity : 0);
     }
 }
