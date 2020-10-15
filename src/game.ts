@@ -14,6 +14,7 @@ export default class PhaseOne extends Phaser.Scene{
     private airEnemies: AirEnemyGroup;
     private groundEnemies: GroundEnemyGroup;
     private soundManager: SoundManager;
+    private sword: Phaser.Physics.Arcade.Sprite;
     private ready: boolean = false;
     constructor(){
         super('phase1')
@@ -22,9 +23,12 @@ export default class PhaseOne extends Phaser.Scene{
 
     //#region PHASER_ROUTINES
     create() {
+        this.game.events.on("GameOver", this.onGameOver, this);
+        this.layers = new Array<Phaser.Tilemaps.StaticTilemapLayer>();
         this.scene.launch("UIScene");
         this.createTileWorld();
         this.player = new Player(this, 200, 1800);
+        this.sword = this.physics.add.sprite(1600, 100, "weapon", 7);
         this.instatiateEnemies();
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(this.player);
@@ -32,9 +36,8 @@ export default class PhaseOne extends Phaser.Scene{
         this.addColliders();
         this.ready = true;
         this.cameras.main.visible = true;
-        this.soundManager = new SoundManager(this.game);
-        
-
+        this.soundManager = new SoundManager(this.game);        
+       
         
     }
 
@@ -50,7 +53,7 @@ export default class PhaseOne extends Phaser.Scene{
 
 
     createTileWorld(){
-        this.map = this.make.tilemap({key: 'phase1map'});
+        this.map = this.add.tilemap('phase1map');
         const tileset = this.map.addTilesetImage('nature_tileset');
         this.layers.push(this.map.createStaticLayer('Ground', tileset));
         this.layers.push(this.map.createStaticLayer('Walls', tileset)); 
@@ -119,6 +122,8 @@ export default class PhaseOne extends Phaser.Scene{
 
 
     addColliders(){
+
+        console.log("Layers: " , this.layers);
         for(let i = 1; i< this.layers.length; i++){
             this.layers[i].setCollisionByExclusion([-1]);
             this.physics.add.collider(this.player, this.layers[i]);
@@ -137,9 +142,12 @@ export default class PhaseOne extends Phaser.Scene{
             this.fireEnemies,
             this.groundEnemies,
             this.airEnemies
-        ], this.player, (object1, object2)=>{this.player.onEnemyHit(object1, object2); 
+        ], this.player, (object1, object2) => {
             this.playEnemyHit(object1, object2);
+            this.player.onEnemyHit(object1, object2); 
         }, null, this);
+
+        this.physics.add.overlap(this.player, this.sword, this.onVictory, null, this);
 
     }
 
@@ -153,7 +161,27 @@ export default class PhaseOne extends Phaser.Scene{
 
     playEnemyHit(object1, object2){
         let enemy = object1 instanceof Player? object2: object1;
+        if (!this.player.dead)
         this.game.events.emit("soundEnemy", enemy.type);
+    }
+
+
+
+    onGameOver(){
+        this.ready= false;
+        this.soundManager?.onGameOver();
+        this.soundManager = null;
+        this.scene.stop("UIScene");
+        this.scene.start("gameOver");
+        
+    }
+
+    onVictory(){
+        this.ready= false;
+        this.soundManager?.onGameOver();
+        this.soundManager = null;
+        this.scene.stop("UIScene");
+        this.scene.start("victory");
     }
 
 }
