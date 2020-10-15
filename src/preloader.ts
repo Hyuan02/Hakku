@@ -25,6 +25,7 @@ export default class Preloader extends Phaser.Scene{
         this.load.spritesheet('windMoving', "assets/Spritesheets/Magic/TornadoMoving_96x96.png", {frameWidth: 96, frameHeight: 96});
         this.load.spritesheet('mageBarrier', 'assets/Spritesheets/Magic/LightCast_96.png', {frameWidth: 96, frameHeight: 96});
         this.load.spritesheet("playerWalk", "assets/Spritesheets/Player/sage_walk.png", {frameWidth: 24, frameHeight: 24});
+        this.load.spritesheet("playerOthers", "assets/Spritesheets/Player/sage_battle.png", {frameWidth: 32, frameHeight: 32});
         this.load.spritesheet("playerDamage", "assets/Spritesheets/Player/sage_other.png", {frameWidth: 24, frameHeight: 24, startFrame: 1, endFrame: 1})
         this.load.spritesheet("weapon", "assets/Spritesheets/Weapon/weapons.png", {frameWidth: 32, frameHeight: 32});
         this.load.tilemapTiledJSON('phase1map', 'assets/cavemapexport/cavemap.json');

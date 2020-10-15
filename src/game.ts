@@ -135,7 +135,8 @@ export default class PhaseOne extends Phaser.Scene{
             this.fireEnemies,
             this.groundEnemies,
             this.airEnemies
-        ], this.player, (object1, object2)=>{this.player.onEnemyHit(object1, object2); 
+        ], this.player, (object1, object2) => {
+            this.player.onEnemyHit(object1, object2); 
             this.playEnemyHit(object1, object2);
         }, null, this);
 
@@ -151,7 +152,8 @@ export default class PhaseOne extends Phaser.Scene{
 
     playEnemyHit(object1, object2){
         let enemy = object1 instanceof Player? object2: object1;
-        this.enemySubject.next(enemy.type);
+        if (!this.player.dead)
+            this.enemySubject.next(enemy.type);
     }
 
 }

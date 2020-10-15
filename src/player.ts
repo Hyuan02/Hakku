@@ -19,6 +19,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     
     private hp: number = 2;
     public damaged: boolean = false;
+    public dead: boolean = false;
     private readonly timeOnDamage: number = 0.5;
     private timeSpent: number = 0.0;
     private readonly bounceVelocity = 70;
@@ -44,7 +45,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     }
 
     verifyInput(){
-        if(this.damaged)
+        if(this.damaged || this.dead)
             return;
         
         this.setVelocity(0);
@@ -149,12 +150,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
             repeat: -1,
         }
 
+        const configDead = {
+            key: 'player_dead',
+            frames: this.scene.anims.generateFrameNumbers('playerOthers', {start: 51, end: 53}),
+            frameRate: 20,
+            repeat: -1,
+        }
+
         this.scene.anims.create(configWalkDown);
         this.scene.anims.create(configWalkLeft);
         this.scene.anims.create(configWalkRight);
         this.scene.anims.create(configWalkUp);
-        
-
+        this.scene.anims.create(configDead);
     }
 
     preUpdate(time, delta){
@@ -164,9 +171,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
                 this.timeSpent += delta/1000;
             }
             else{
-                this.timeSpent = 0;
-                this.damaged = false;
-                this.setTexture('playerWalk');
+                if (!this.dead) {
+                    this.timeSpent = 0;
+                    this.damaged = false;
+                    this.setTexture('playerWalk');
+                }
             }
         }
         this.groundMagic.updatePosition(this.x,this.y);
@@ -197,6 +206,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
 
     onEnemyHit(object1, object2){
         if(!this.damaged){
+            if (this.dead)
+                return;
             let signX, signY;
             if(object1 instanceof Player){
                 signX = Math.sign(object1.x - object2.x);
@@ -209,9 +220,24 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
             this.hp -= 1; 
             this.damaged = true;
             this.setVelocity(this.bounceVelocity * signX, this.bounceVelocity * signY);
-            this.anims.stop();
-            this.setTexture('playerDamage');
+            if (this.hp <= 0) {
+                this.goToGameOver();
+            } else {
+                this.anims.stop();
+                this.setTexture('playerDamage');
+            }
+            
         }
+    }
+    goToGameOver() {
+        this.dead = true;
+        this.anims.play('player_dead');
+        this.setVelocity(0);
+        this.scene.cameras.main.fadeOut(3000,0,0,0,(camera, complete) => {
+                if (complete === 1)
+                    this.scene.scene.start('gameOver');
+        });
+        
     }
 
 

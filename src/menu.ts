@@ -10,7 +10,6 @@ export default class Menu extends Phaser.Scene {
     }
 
     create(){
-
         this.addBackgroundImages();
         this.addInteractiveImages();
         this.setGameTitle();
