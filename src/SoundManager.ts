@@ -1,36 +1,19 @@
 import 'phaser';
-import {Subject} from 'rxjs';
 
 export default class SoundManager{
-    private playMagicSounds: Subject<string>; 
-    private playEnemySounds: Subject<string>;
-
     private magicSounds: Array<Phaser.Sound.BaseSound> = new Array<Phaser.Sound.BaseSound>();
     private enemySounds: Array<Phaser.Sound.BaseSound> = new Array<Phaser.Sound.BaseSound>();
     private mainTrack : Phaser.Sound.BaseSound;
     private game: Phaser.Game;
-    constructor(playerFX: Subject<string>, playEnemySounds: Subject<string>,  game: Phaser.Game){
-        this.playMagicSounds = playerFX;
-        this.playEnemySounds = playEnemySounds;
+    constructor( game: Phaser.Game){
         this.game = game;
+        this.game.events.on('playMagic', this.playMagicSound, this);
+        this.game.events.on('soundEnemy', this.playEnemySound, this);
         this.initRoutine();
-        
     }
 
 
     initRoutine(){
-        if(this.playMagicSounds){
-            this.playMagicSounds.subscribe(magic=>{
-                this.playMagicSound(magic);
-            });
-        }
-
-        if(this.playEnemySounds){
-            this.playEnemySounds.subscribe(enemy=>{
-                this.playEnemySound(enemy);
-            });
-        }
-
         this.magicSounds.push(this.game.sound.add('Magic1'));
         this.magicSounds.push(this.game.sound.add('Magic2'));
         this.magicSounds.push(this.game.sound.add('Magic3'));
@@ -44,6 +27,8 @@ export default class SoundManager{
             loop: true           
         });
     }
+
+
 
     playMagicSound(magic){
         switch(magic){
