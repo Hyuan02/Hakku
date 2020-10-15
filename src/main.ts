@@ -2,6 +2,7 @@ import 'phaser';
 import './game';
 import PhaseOne from './game';
 import Menu from './menu';
+import UIScene from './UIScene';
 import Preloader from './preloader';
 
 const config = {
@@ -20,7 +21,7 @@ const config = {
         }
     },
     pixelArt: true,
-    scene: [Preloader,Menu,PhaseOne]
+    scene: [Preloader,Menu,PhaseOne, UIScene]
 };
 
 const game = new Phaser.Game(config);
