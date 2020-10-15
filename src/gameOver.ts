@@ -36,9 +36,10 @@ export default class GameOver extends Phaser.Scene {
             this.cameras.main.fadeOut(1000,0,0,0); 
             this.cameras.main
             .once( Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,(cam,effect) => {
-                const phase1 = this.scene.get('phase1')
-                phase1.registry.destroy();
-                phase1.scene.restart();
+                this.scene.start("phase1", new Object());
+                // const phase1 = this.scene.get('phase1')
+                // phase1.registry.destroy();
+                // phase1.scene.restart();
                 
             });
         });

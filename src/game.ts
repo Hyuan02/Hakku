@@ -24,6 +24,8 @@ export default class PhaseOne extends Phaser.Scene{
 
     //#region PHASER_ROUTINES
     create() {
+        this.game.events.on("GameOver", this.onGameOver, this);
+        this.layers = new Array<Phaser.Tilemaps.StaticTilemapLayer>();
         this.createTileWorld();
         this.player = new Player(this, 200, 1800);
         this.instatiateEnemies();
@@ -34,6 +36,7 @@ export default class PhaseOne extends Phaser.Scene{
         this.ready = true;
         this.cameras.main.visible = true;
         this.soundManager = new SoundManager(this.player.magicSubject, this.enemySubject, this.game);
+        console.log(this.game);
     }
 
     update(time, delta){
@@ -48,7 +51,7 @@ export default class PhaseOne extends Phaser.Scene{
 
 
     createTileWorld(){
-        this.map = this.make.tilemap({key: 'phase1map'});
+        this.map = this.add.tilemap('phase1map');
         const tileset = this.map.addTilesetImage('nature_tileset');
         this.layers.push(this.map.createStaticLayer('Ground', tileset));
         this.layers.push(this.map.createStaticLayer('Walls', tileset)); 
@@ -117,6 +120,8 @@ export default class PhaseOne extends Phaser.Scene{
 
 
     addColliders(){
+
+        console.log("Layers: " , this.layers);
         for(let i = 1; i< this.layers.length; i++){
             this.layers[i].setCollisionByExclusion([-1]);
             this.physics.add.collider(this.player, this.layers[i]);
@@ -136,8 +141,8 @@ export default class PhaseOne extends Phaser.Scene{
             this.groundEnemies,
             this.airEnemies
         ], this.player, (object1, object2) => {
-            this.player.onEnemyHit(object1, object2); 
             this.playEnemyHit(object1, object2);
+            this.player.onEnemyHit(object1, object2); 
         }, null, this);
 
     }
@@ -154,6 +159,15 @@ export default class PhaseOne extends Phaser.Scene{
         let enemy = object1 instanceof Player? object2: object1;
         if (!this.player.dead)
             this.enemySubject.next(enemy.type);
+    }
+
+
+
+    onGameOver(){
+        this.ready= false;
+        this.soundManager?.onGameOver();
+        this.soundManager = null;
+        this.scene.start("gameOver");
     }
 
 }

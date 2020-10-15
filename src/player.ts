@@ -17,7 +17,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     private onSkillR: boolean = false;
     private groundMagic: Ground;
     
-    private hp: number = 2;
+    private hp: number = 4;
     public damaged: boolean = false;
     public dead: boolean = false;
     private readonly timeOnDamage: number = 0.5;
@@ -234,8 +234,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         this.anims.play('player_dead');
         this.setVelocity(0);
         this.scene.cameras.main.fadeOut(3000,0,0,0,(camera, complete) => {
-                if (complete === 1)
-                    this.scene.scene.start('gameOver');
+                if (complete === 1){
+                    this.scene.game.events.emit('GameOver');
+                }
+
         });
         
     }

@@ -95,4 +95,9 @@ export default class SoundManager{
             break;
         }
     }
+
+
+    onGameOver(){
+        this.mainTrack?.stop();
+    }
 }
