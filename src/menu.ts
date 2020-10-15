@@ -3,8 +3,11 @@ export default class Menu extends Phaser.Scene {
     start: Phaser.GameObjects.Image;
     soundBtn: Phaser.GameObjects.Image;
     muteBtn: Phaser.GameObjects.Image;
+    controlsBtn: Phaser.GameObjects.Image;
+    controlsDescription: Array<Phaser.GameObjects.BitmapText> = [];
     enabledsoundBtn: boolean = true;
     mainSound: Phaser.Sound.BaseSound;
+    showControls: boolean = false;
     constructor(){
         super('menu')
     }
@@ -14,6 +17,7 @@ export default class Menu extends Phaser.Scene {
         this.addBackgroundImages();
         this.addInteractiveImages();
         this.setGameTitle();
+        this.listenControlsBtnGame();
         this.listenSoundBtnGame();
         this.listenMuteBtnGame();
         this.listenStartGame();
@@ -38,6 +42,13 @@ export default class Menu extends Phaser.Scene {
         this.add.image(positionX,positionY,"bg1").setScale(scaleSizeX,scaleSizeY);
         this.add.sprite(650, 660, "playerWalk", 0).setScale(2.5);
         this.add.sprite(640,665, "weapon",7).setScale(1.5);
+        this.controlsDescription.push(this.add.bitmapText(this.cameras.main.centerX - 90, this.cameras.main.centerY - 200, 'vcr','Q -> Ice',38).setVisible(false));
+        this.controlsDescription.push(this.add.bitmapText(this.cameras.main.centerX - 90, this.cameras.main.centerY - 150, 'vcr','W -> Fire',38).setVisible(false));
+        this.controlsDescription.push(this.add.bitmapText(this.cameras.main.centerX - 90, this.cameras.main.centerY - 100, 'vcr','E -> Wind',38).setVisible(false));
+        this.controlsDescription.push(this.add.bitmapText(this.cameras.main.centerX - 90, this.cameras.main.centerY - 50, 'vcr','R -> Light',38).setVisible(false));
+        this.controlsDescription.push(this.add.bitmapText(this.cameras.main.centerX - 200, this.cameras.main.centerY, 'vcr','Arrow Keys - Movement',38).setVisible(false));
+
+
     }
 
     addInteractiveImages() {
@@ -56,6 +67,11 @@ export default class Menu extends Phaser.Scene {
         this.soundBtn = this.add.image(1200, 650, 'ui', frames[5]);
         this.soundBtn.setInteractive();
         this.soundBtn.input.cursor = 'pointer';
+
+        //Controls icon
+        this.controlsBtn = this.add.image(1100,650,'ui',frames[44]);
+        this.controlsBtn.setInteractive();
+        this.controlsBtn.input.cursor = 'pointer';
     }
 
     
@@ -95,6 +111,21 @@ export default class Menu extends Phaser.Scene {
             
         });
     }
+
+    listenControlsBtnGame(){
+
+        this.controlsBtn.on('pointerdown', () => {
+            this.showControls = !this.showControls; 
+            this.showControlsDescriptions(this.showControls); 
+        });
+    }
+
+    showControlsDescriptions(value: boolean){
+        this.title.setVisible(!value);
+        this.start.setVisible(!value);
+        this.controlsDescription.forEach(e => e.setVisible(value));
+    }
+
 
     listenAnyKeyBoardInput(){
 
