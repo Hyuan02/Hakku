@@ -5,6 +5,7 @@ import GameOver from './gameOver';
 import Menu from './menu';
 import UIScene from './UIScene';
 import Preloader from './preloader';
+import Victory from './victory';
 
 const config = {
     type: Phaser.AUTO,
@@ -22,7 +23,7 @@ const config = {
         }
     },
     pixelArt: true,
-    scene: [Preloader,Menu,PhaseOne,GameOver, UIScene]
+    scene: [Preloader,Menu,PhaseOne,GameOver, Victory,UIScene]
 };
 
 const game = new Phaser.Game(config);
